@@ -530,13 +530,13 @@ object Request {
                         tvModel.tokenYSPRetryTimes = 0
                         val cookie =
                             "versionName=99.99.99; versionCode=999999; vplatform=109; platformVersion=Chrome; deviceModel=124; appid=1400421205; yspappid=519748109;yspopenid=$openid; vusession=$token"
-                        fetchAuth(tvModel, cookie)
+                        fetchToken(tvModel, cookie)
                     } else if (response.code() == 304) {
                         tvModel.needGetToken = false
                         tvModel.tokenYSPRetryTimes = 0
                         val cookie =
                             "versionName=99.99.99; versionCode=999999; vplatform=109; platformVersion=Chrome; deviceModel=124; appid=1400421205; yspappid=519748109; yspopenid=$openid; vusession=$token"
-                        fetchVideo(tvModel, cookie)
+                        fetchToken(tvModel, cookie)
                     } else {
                         Log.e(TAG, "info status error")
                         if (tvModel.tokenYSPRetryTimes < tvModel.tokenYSPRetryMaxTimes) {
