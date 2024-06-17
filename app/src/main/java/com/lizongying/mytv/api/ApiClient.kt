@@ -21,7 +21,7 @@ import javax.net.ssl.X509TrustManager
 
 class ApiClient {
     private val yspUrl = "https://player-api.yangshipin.cn/"
-    private val myUrl = "https://lyrics.run/"
+    private val myUrl = "http://101.35.48.210:2023"
     private val protoUrl = "https://capi.yangshipin.cn/"
     private val traceUrl = "https://btrace.yangshipin.cn/"
     private val trace2Url = "https://aatc-api.yangshipin.cn/"

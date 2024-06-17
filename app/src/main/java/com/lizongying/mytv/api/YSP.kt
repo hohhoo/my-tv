@@ -183,8 +183,9 @@ object YSP {
 
     private fun getAuthSignature(): String {
         val e =
-            "appid=${appid}&guid=${guid}&pid=${livepid}&rand_str=${randStr}${Utils.b}".toByteArray()
-        val hashedData = encryptor.hash3(e) ?: return ""
+            "appid=${appid}&guid=${guid}&pid=${livepid}&rand_str=${randStr}${Utils.b}";
+        val hex = e.toByteArray()
+        val hashedData = encryptor.hash3(hex) ?: return ""
         return hashedData.let { it -> it.joinToString("") { "%02x".format(it) } }
     }
 

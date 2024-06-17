@@ -7,6 +7,7 @@ data class Info(
 ) {
     data class Data(
         val token: String,
+        val openId: String,
     )
 }
 

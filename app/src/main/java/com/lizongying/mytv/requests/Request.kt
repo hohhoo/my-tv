@@ -57,7 +57,7 @@ object Request {
     private var tokenFH = ""
 
     private var needAuth = true
-    private var needToken = false
+    private var needToken = true
     private var needToken2 = true
 
     private val handler = Handler(Looper.getMainLooper())
@@ -206,6 +206,7 @@ object Request {
 
         val data = YSP.getAuthData(tvModel)
         val request = AuthRequest(data)
+        Log.d(TAG, "fetchAuth: $data")
         callAuth = request.let { yspApiService.getAuth("guid=${YSP.getGuid()}; $cookie", it) }
         callAuth?.enqueue(object : Callback<Auth> {
             override fun onResponse(call: Call<Auth>, response: Response<Auth>) {
@@ -510,12 +511,20 @@ object Request {
 
     private fun fetchToken(tvModel: TVViewModel) {
         cancelCall()
+
+//        tvModel.needGetToken = false
+//        tvModel.tokenYSPRetryTimes = 0
+//        val cookie =
+//            "versionName=99.99.99; versionCode=999999; vplatform=109; platformVersion=Chrome; deviceModel=124; appid=1400421205; yspappid=519748109; vusession=$vipVideoToken; yspopenid=$vipOpenId"
+//        fetchToken(tvModel, cookie)
+//        return;
         if (tvModel.needGetToken) {
             callInfo = yspTokenService.getInfo("")
             callInfo?.enqueue(object : Callback<Info> {
                 override fun onResponse(call: Call<Info>, response: Response<Info>) {
                     if (response.isSuccessful && response.body()?.data?.token != null) {
                         token = response.body()?.data?.token!!
+                        openid = response.body()?.data?.openId!!
                         Log.i(TAG, "info success $token")
                         tvModel.needGetToken = false
                         tvModel.tokenYSPRetryTimes = 0
@@ -571,11 +580,19 @@ object Request {
     private fun fetchAuth(tvModel: TVViewModel) {
         cancelCall()
         if (tvModel.needGetToken) {
+//            token = "CANEhxTYOiwkQpzqliUV71h7F7ym7o6LJfYXTaDp6pk"
+//            Log.i(TAG, "info success $token")
+//            tvModel.needGetToken = false
+//            tvModel.tokenYSPRetryTimes = 0
+//            val cookie =
+//                "versionName=99.99.99; versionCode=999999; vplatform=109; platformVersion=Chrome; deviceModel=120; appid=1400421205; yspappid=519748109;yspopenid=$openid; vusession=$token"
+//            fetchAuth(tvModel, cookie)
             callInfo = yspTokenService.getInfo("")
             callInfo?.enqueue(object : Callback<Info> {
                 override fun onResponse(call: Call<Info>, response: Response<Info>) {
                     if (response.isSuccessful && response.body()?.data?.token != null) {
                         token = response.body()?.data?.token!!
+                        openid = response.body()?.data?.openId!!
                         Log.i(TAG, "info success $token")
                         tvModel.needGetToken = false
                         tvModel.tokenYSPRetryTimes = 0

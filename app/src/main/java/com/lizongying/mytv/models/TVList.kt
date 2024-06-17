@@ -930,12 +930,12 @@ object TVList {
         list.forEach { (k, v) ->
             val group = mutableListOf<TV>()
             v.forEach { v1 ->
-                if (!v1.mustToken) {
+//                if (!v1.mustToken) {
                     v1.id = id
-                    v1.needToken = false
+//                    v1.needToken = false
                     id++
                     group.add(v1)
-                }
+//                }
             }
             if (group.size > 0) {
                 listNew[k] = group
