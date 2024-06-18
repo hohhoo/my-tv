@@ -17,6 +17,7 @@ data class LiveInfoData(
     val chanll: String,
     val playurl: String,
     val errinfo: String,
+    val iretcode: Int,
 )
 
 data class LiveInfoRequest(

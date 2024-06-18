@@ -333,67 +333,75 @@ object Request {
             override fun onResponse(call: Call<LiveInfo>, response: Response<LiveInfo>) {
                 if (response.isSuccessful) {
                     val liveInfo = response.body()
-
                     if (liveInfo?.data?.playurl != null) {
-                        val chanll = liveInfo.data.chanll
-                        val decodedBytes = Base64.decode(
-                            chanll.substring(9, chanll.length - 3),
-                            Base64.DEFAULT
-                        )
-                        val decodedString = String(decodedBytes)
-                        val matchResult = regex.find(decodedString)
-                        if (matchResult != null) {
-                            val (key, iv) = matchResult.destructured
-                            val keyBytes = Base64.decode(key, Base64.DEFAULT)
-                            val ivBytes = Base64.decode(iv, Base64.DEFAULT)
-                            val url = liveInfo.data.playurl + "&revoi=" + encryptTripleDES(
-                                keyBytes + byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0),
-                                ivBytes
-                            ).uppercase() + liveInfo.data.extended_param
-                            Log.d(TAG, "$title url $url")
+                        if (liveInfo.data.iretcode == 1) {
+                            val chanll = liveInfo.data.chanll
+                            val decodedBytes = Base64.decode(
+                                chanll.substring(9, chanll.length - 3),
+                                Base64.DEFAULT
+                            )
+                            val decodedString = String(decodedBytes)
+                            val matchResult = regex.find(decodedString)
+                            if (matchResult != null) {
+                                val (key, iv) = matchResult.destructured
+                                val keyBytes = Base64.decode(key, Base64.DEFAULT)
+                                val ivBytes = Base64.decode(iv, Base64.DEFAULT)
+                                val url = liveInfo.data.playurl + "&revoi=" + encryptTripleDES(
+                                    keyBytes + byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0),
+                                    ivBytes
+                                ).uppercase() + liveInfo.data.extended_param
+                                Log.d(TAG, "$title url $url")
+                                tvModel.addVideoUrl(url)
+                                tvModel.allReady()
+                                tvModel.retryTimes = 0
+                                btraceRunnable = BtraceRunnable(tvModel)
+                                handler.post(btraceRunnable)
+                            } else {
+                                Log.e(TAG, "$title key error")
+                                if (tvModel.retryTimes < tvModel.retryMaxTimes) {
+                                    tvModel.retryTimes++
+                                    if (tvModel.getTV().needToken) {
+                                        if (needToken && tvModel.tokenYSPRetryTimes < tvModel.tokenYSPRetryMaxTimes) {
+                                            tvModel.tokenYSPRetryTimes++
+                                            tvModel.needGetToken = true
+                                            if (needAuth) {
+                                                fetchAuth(tvModel)
+                                            } else {
+                                                fetchVideo(tvModel)
+                                            }
+                                        } else {
+                                            if (!tvModel.getTV().mustToken) {
+                                                if (needAuth) {
+                                                    fetchAuth(tvModel, cookie)
+                                                } else {
+                                                    fetchVideo(tvModel, cookie)
+                                                }
+                                            } else {
+                                                val err = "错误"
+                                                Log.e(TAG, "$title $err")
+                                                tvModel.setErrInfo(err)
+                                            }
+                                        }
+                                    } else {
+                                        if (needAuth) {
+                                            fetchAuth(tvModel, cookie)
+                                        } else {
+                                            fetchVideo(tvModel, cookie)
+                                        }
+                                    }
+                                } else {
+                                    val err = "结果错误"
+                                    Log.e(TAG, "$title $err")
+                                    tvModel.setErrInfo(err)
+                                }
+                            }
+                        } else {
+                            val url = liveInfo.data.playurl + "&revoi=" + liveInfo.data.extended_param
                             tvModel.addVideoUrl(url)
                             tvModel.allReady()
                             tvModel.retryTimes = 0
                             btraceRunnable = BtraceRunnable(tvModel)
                             handler.post(btraceRunnable)
-                        } else {
-                            Log.e(TAG, "$title key error")
-                            if (tvModel.retryTimes < tvModel.retryMaxTimes) {
-                                tvModel.retryTimes++
-                                if (tvModel.getTV().needToken) {
-                                    if (needToken && tvModel.tokenYSPRetryTimes < tvModel.tokenYSPRetryMaxTimes) {
-                                        tvModel.tokenYSPRetryTimes++
-                                        tvModel.needGetToken = true
-                                        if (needAuth) {
-                                            fetchAuth(tvModel)
-                                        } else {
-                                            fetchVideo(tvModel)
-                                        }
-                                    } else {
-                                        if (!tvModel.getTV().mustToken) {
-                                            if (needAuth) {
-                                                fetchAuth(tvModel, cookie)
-                                            } else {
-                                                fetchVideo(tvModel, cookie)
-                                            }
-                                        } else {
-                                            val err = "错误"
-                                            Log.e(TAG, "$title $err")
-                                            tvModel.setErrInfo(err)
-                                        }
-                                    }
-                                } else {
-                                    if (needAuth) {
-                                        fetchAuth(tvModel, cookie)
-                                    } else {
-                                        fetchVideo(tvModel, cookie)
-                                    }
-                                }
-                            } else {
-                                val err = "结果错误"
-                                Log.e(TAG, "$title $err")
-                                tvModel.setErrInfo(err)
-                            }
                         }
                     } else {
                         if (liveInfo?.data?.errinfo != null && liveInfo.data.errinfo == "应版权方要求，暂停提供直播信号，请点击观看其他精彩节目") {
