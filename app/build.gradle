@@ -118,4 +118,6 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.coroutines.android)
     implementation(libs.javax.annotation.api)
+
+    implementation(libs.process.phoenix)
 }
