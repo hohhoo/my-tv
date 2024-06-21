@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Base64
 import android.util.Log
+import com.lizongying.mytv.SP
 import com.lizongying.mytv.Utils
 import com.lizongying.mytv.Utils.getDateFormat
 import com.lizongying.mytv.api.ApiClient
@@ -57,7 +58,7 @@ object Request {
     private var tokenFH = ""
 
     private var needAuth = true
-    private var needToken = true
+    private var needToken = SP.moreChannel
     private var needToken2 = true
 
     private val handler = Handler(Looper.getMainLooper())

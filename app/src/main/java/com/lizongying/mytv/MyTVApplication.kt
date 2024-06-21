@@ -8,6 +8,7 @@ import android.view.WindowManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.multidex.MultiDex
+import com.jakewharton.processphoenix.ProcessPhoenix
 import com.lizongying.mytv.models.MyViewModel
 
 
@@ -30,6 +31,10 @@ class MyTVApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        if(ProcessPhoenix.isPhoenixProcess(this)){
+            return
+        }
 
         displayMetrics = DisplayMetrics()
         realDisplayMetrics = DisplayMetrics()
@@ -123,5 +128,10 @@ class MyTVApplication : Application() {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         MultiDex.install(base)
+    }
+
+
+    fun restartActivity() {
+        ProcessPhoenix.triggerRebirth(this)
     }
 }

@@ -20,6 +20,8 @@ object SP {
 
     const val KEY_GRID = "grid"
 
+    const val KEY_MORE_CHANNEL = "enable_more_channel"
+
     // Position in list of the selected channel item
     private const val KEY_POSITION = "position"
 
@@ -61,6 +63,16 @@ object SP {
     var bootStartup: Boolean
         get() = sp.getBoolean(KEY_BOOT_STARTUP, false)
         set(value) = sp.edit().putBoolean(KEY_BOOT_STARTUP, value).apply()
+
+
+    var moreChannel: Boolean
+        get() = sp.getBoolean(KEY_MORE_CHANNEL, false)
+        set(value) {
+            if (value != this.moreChannel) {
+                sp.edit().putBoolean(KEY_MORE_CHANNEL, value).apply()
+                listener?.onSharedPreferenceChanged(KEY_MORE_CHANNEL)
+            }
+        }
 
     var grid: Boolean
         get() = sp.getBoolean(KEY_GRID, false)

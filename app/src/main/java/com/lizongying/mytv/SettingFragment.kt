@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -88,6 +90,20 @@ class SettingFragment : DialogFragment() {
             }
         }
 
+        binding.switchMoreChannel.run {
+            isChecked = SP.moreChannel
+            setOnCheckedChangeListener { _, isChecked ->
+                SP.moreChannel = isChecked
+
+                Toast.makeText(context, "即将重启应用", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val application = requireActivity().applicationContext as MyTVApplication
+                    application.restartActivity()
+                }, 1000)
+
+            }
+        }
+
         binding.switchGrid.run {
             isChecked = SP.grid
             setOnCheckedChangeListener { _, isChecked ->
@@ -151,6 +167,9 @@ class SettingFragment : DialogFragment() {
 
         binding.switchBootStartup.textSize = textSize
         binding.switchBootStartup.layoutParams = layoutParamsChannelSwitch
+
+        binding.switchMoreChannel.textSize = textSize
+        binding.switchMoreChannel.layoutParams = layoutParamsChannelSwitch
 
         binding.switchGrid.textSize = textSize
         binding.switchGrid.layoutParams = layoutParamsChannelSwitch
